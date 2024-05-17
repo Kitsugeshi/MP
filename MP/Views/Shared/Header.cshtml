@@ -1,7 +1,35 @@
-﻿<header>
+﻿@using System.Security.Claims
+
+<header>
     <ul>
         <li><a asp-controller="Products" asp-action="Index">Products</a></li>
-        <li><a asp-controller="PickUpPoints" asp-action="Index">Pick up points</a></li>
+        @if (User.FindFirst(ClaimTypes.Role)?.Value! == "Admin")
+        {
+            <li><a asp-controller="PickUpPoints" asp-action="Index">Pick up points</a></li>
+            <li><a asp-controller="Employees" asp-action="Index">Employees</a></li>
+        }
+        else if (User.FindFirst(ClaimTypes.Role)?.Value! == "Employee")
+        {
+            <li><a asp-controller="Orders" asp-action="Index">Orders</a></li>
+        }
     </ul>
-    <button>Authorization</button>
+    
+    @if(User.Identity.IsAuthenticated)
+    {
+        <form method="post">
+            <button type="submit" asp-action="Logout">
+                Sign Out
+            </button>
+        </form>
+    }
+    else
+    {
+        <form method="post">
+            <button type="submit" asp-controller="Login" asp-action="Login">
+                Sign In
+            </button>
+        </form>
+    }
+    
+
 </header>

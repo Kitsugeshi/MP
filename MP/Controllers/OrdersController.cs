@@ -10,21 +10,20 @@ using MP.Models;
 
 namespace MP.Controllers
 {
-    public class PickUpPointsController : Controller
+    public class OrdersController : Controller
     {
         private readonly MarketDbContext _context;
 
-        public PickUpPointsController(MarketDbContext context)
+        public OrdersController(MarketDbContext context)
         {
             _context = context;
         }
 
-        // GET: PickUpPoints
+        // GET: Orders
         public async Task<IActionResult> Index()
         {
-              return _context.PickUpPoints != null ? 
-                          View(await _context.PickUpPoints.ToListAsync()) :
-                          Problem("Entity set 'MarketDbContext.PickUpPoints'  is null.");
+            var marketDbContext = _context.Orders.Include(o => o.IdClientNavigation).Include(o => o.IdPickUpPointNavigation);
+            return View(await marketDbContext.ToListAsync());
         }
 
         [HttpPost]
@@ -32,11 +31,6 @@ namespace MP.Controllers
         {
             await HttpContext.SignOutAsync();
             return RedirectToAction("Index", "Products");
-        }
-
-        private bool PickUpPointExists(int id)
-        {
-          return (_context.PickUpPoints?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

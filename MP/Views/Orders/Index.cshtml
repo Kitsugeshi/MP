@@ -1,0 +1,35 @@
+﻿@model IEnumerable<MP.Models.Order>
+
+<h1>Orders</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Price
+            </th>
+            <th>
+                IdClient
+            </th>
+            <th>
+                IdPickUpPoint
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Price)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IdClientNavigation.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IdPickUpPointNavigation.Id)
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

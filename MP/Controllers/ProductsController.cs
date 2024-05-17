@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -21,27 +24,21 @@ namespace MP.Controllers
         // GET: Products
         public async Task<IActionResult> Index()
         {
+
             var marketDbContext = _context.Products.Include(p => p.IdSellerNavigation);
             return View(await marketDbContext.ToListAsync());
         }
-
-        // GET: Products/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Search(string key)
         {
-            if (id == null || _context.Products == null)
-            {
-                return NotFound();
-            }
+            var product = await _context.Products.Where(p => p.Name.Contains(key)).ToListAsync();
+            return View("Index", product);
+        }
 
-            var product = await _context.Products
-                .Include(p => p.IdSellerNavigation)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (product == null)
-            {
-                return NotFound();
-            }
-
-            return View(product);
+        [HttpPost]
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync();
+            return RedirectToAction("Index", "Products");
         }
 
         // GET: Products/Create
